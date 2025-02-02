@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar/SearchBar.tsx';
+import SearchResult from './components/SearchResult/SearchResult.tsx';
 import { Book } from './types.tsx';
 
 interface State {
@@ -37,6 +38,7 @@ class App extends Component {
         <button className="error-button" onClick={this.throwError}>
           Error
         </button>
+        <SearchResult books={this.state.books} />
       </div>
     );
   }
