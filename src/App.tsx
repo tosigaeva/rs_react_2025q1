@@ -3,6 +3,7 @@ import './App.css';
 import SearchBar from './components/SearchBar/SearchBar.tsx';
 import SearchResult from './components/SearchResult/SearchResult.tsx';
 import { Book } from './types.tsx';
+import Loader from './components/Loader/Loader.tsx';
 
 interface State {
   books: Book[];
@@ -28,7 +29,6 @@ class App extends Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <div className="app">
         <SearchBar
@@ -38,7 +38,11 @@ class App extends Component {
         <button className="error-button" onClick={this.throwError}>
           Error
         </button>
-        <SearchResult books={this.state.books} />
+        {this.state.isLoading ? (
+          <Loader />
+        ) : (
+          <SearchResult books={this.state.books} />
+        )}
       </div>
     );
   }
