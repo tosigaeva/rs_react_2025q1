@@ -1,0 +1,28 @@
+.error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 15px;
+  height: 100vh;
+}
+
+.error-title {
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.error-subtitle {
+  letter-spacing: 1px;
+  color: grey;
+}
+
+.refresh-button {
+  width: 25%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: grey;
+  letter-spacing: 1px;
+  color: white;
+}
