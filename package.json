@@ -1,5 +1,5 @@
 {
-  "name": "untitled3",
+  "name": "react",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "format:fix": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,scss,md}'",
-    "lint": "eslint",
+    "lint": "eslint 'src/**/*.{ts,tsx,js,jsx}'",
     "lint:fix": "eslint 'src/**/*.{ts,tsx,js,jsx}' --fix",
     "preview": "vite preview",
     "prepare": "husky"
