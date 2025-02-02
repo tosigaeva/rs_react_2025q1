@@ -8,12 +8,14 @@ import Loader from './components/Loader/Loader.tsx';
 interface State {
   books: Book[];
   isLoading: boolean;
+  error: Error | null;
 }
 
 class App extends Component {
   state: State = {
     books: [],
     isLoading: false,
+    error: null,
   };
 
   setBooks = (books: Book[]) => {
@@ -24,18 +26,26 @@ class App extends Component {
     this.setState({ isLoading });
   };
 
-  throwError = () => {
-    this.setState({ books: null });
+  throwError = (error: Error) => {
+    this.setState({ error });
   };
 
   render() {
+    if (this.state.error) {
+      throw this.state.error;
+    }
+
     return (
       <div className="app">
         <SearchBar
           sendBooks={this.setBooks}
           sendLoadingStatus={this.setIsLoading}
+          throwError={this.throwError}
         />
-        <button className="error-button" onClick={this.throwError}>
+        <button
+          className="error-button"
+          onClick={() => this.throwError(new Error('An error occurred'))}
+        >
           Error
         </button>
         {this.state.isLoading ? (

@@ -10,6 +10,7 @@ import {
 interface Props {
   sendBooks: (books: Book[]) => void;
   sendLoadingStatus: (isLoading: boolean) => void;
+  throwError: (error: Error) => void;
 }
 
 interface State {
@@ -36,6 +37,7 @@ class SearchBar extends Component<Props, State> {
       this.props.sendLoadingStatus(false);
     } catch (error) {
       console.error('Error:', error);
+      this.props.throwError(new Error('Api Error'));
     }
   }
 
@@ -44,8 +46,8 @@ class SearchBar extends Component<Props, State> {
   };
 
   handleClick = () => {
-    this.fetchListOfBooks();
     setSearchValue(this.state.inputValue);
+    this.fetchListOfBooks();
   };
 
   render() {
