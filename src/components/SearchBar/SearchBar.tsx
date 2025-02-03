@@ -26,7 +26,9 @@ class SearchBar extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.setState({ inputValue: getSearchValue() });
+    this.setState({ inputValue: getSearchValue() }, () =>
+      this.fetchListOfBooks(),
+    );
   }
 
   async fetchListOfBooks() {
