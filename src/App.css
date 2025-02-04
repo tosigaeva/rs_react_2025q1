@@ -1,0 +1,25 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  font-size: 16px;
+}
+
+.error-button {
+  width: 50%;
+  margin: 10px 0 30px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  background-color: crimson;
+  letter-spacing: 1px;
+  color: white;
+}
+
+@media (max-width: 700px) {
+  .error-button {
+    width: 100%;
+  }
+}
