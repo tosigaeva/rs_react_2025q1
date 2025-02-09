@@ -25,11 +25,11 @@ const ItemDetails: React.FC = () => {
 
     return (
         <div className="ItemDetails" onClick={(e) => e.stopPropagation()}>
-            Details
+            <h3>Details</h3>
             {loading ? (
                 <Loader />
             ) : details ? (
-                <div>{details.name}</div>
+                <p>{details.name}</p>
             ) : (
                 <p>No details available</p>
             )}
