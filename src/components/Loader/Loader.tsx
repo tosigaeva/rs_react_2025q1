@@ -1,14 +1,5 @@
-import { Component } from 'react';
-import './Loader.css';
+import './loader.css';
 
-class Loader extends Component {
-  render() {
-    return (
-      <div>
-        <div className="loader"></div>
-      </div>
-    );
-  }
+export default function Loader() {
+    return <div className="loader">Loading...</div>;
 }
-
-export default Loader;

@@ -1,73 +1,71 @@
-import { Component, ChangeEvent } from 'react';
-import './SearchBar.css';
-import { Book } from '../../types.tsx';
-import { fetchBooks } from '../../servises/bookService.ts';
-import {
-  getSearchValue,
-  setSearchValue,
-} from '../../servises/localStorageUtil.ts';
+import React, { useEffect } from 'react';
+import { Props } from '../../types/SearchBar.ts';
+import useSearchQuery from '../../hooks/useSearchQuery.tsx';
+import { useLocation } from 'react-router-dom';
 
-interface Props {
-  sendBooks: (books: Book[]) => void;
-  sendLoadingStatus: (isLoading: boolean) => void;
-  throwError: (error: Error) => void;
-}
+const SearchBar: React.FC<Props> = ({ onSearch, pageNumber }) => {
+    const [searchTerm, setSearchTerm] = useSearchQuery('searchTerm');
+    const location = useLocation();
 
-interface State {
-  inputValue: string;
-}
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        pageNumber = Number(params.get('page')) - 1 || 0;
+        pageNumber = pageNumber < 0 ? 0 : pageNumber;
+        fetchItems(searchTerm);
+        fetchItems(searchTerm);
+    }, [location.search]);
 
-class SearchBar extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      inputValue: '',
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
     };
-  }
 
-  componentDidMount() {
-    this.setState({ inputValue: getSearchValue() }, () =>
-      this.fetchListOfBooks()
-    );
-  }
+    const handleSearch = () => {
+        const trimmedSearchTerm = searchTerm.trim();
+        fetchItems(trimmedSearchTerm);
+    };
 
-  async fetchListOfBooks() {
-    try {
-      this.props.sendLoadingStatus(true);
-      const books = await fetchBooks(this.state.inputValue);
-      this.props.sendBooks(books);
-      this.props.sendLoadingStatus(false);
-    } catch (error) {
-      console.error('Error:', error);
-      this.props.throwError(new Error('Api Error'));
-    }
-  }
+    const fetchItems = (searchTerm: string) => {
+        onSearch({ items: [], totalPages: 0, error: null, loading: true });
+        const url =
+            'https://stapi.co/api/v1/rest/animal/search?pageNumber=' +
+            pageNumber;
+        const body = new URLSearchParams();
+        if (searchTerm) {
+            body.append('name', searchTerm);
+        }
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body.toString(),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
 
-  handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ inputValue: event.target.value });
-  };
+                return response.json();
+            })
+            .then((data) =>
+                onSearch({
+                    items: data.animals,
+                    totalPages: data.page.totalPages,
+                    error: null,
+                    loading: false,
+                }),
+            )
+            .catch((error) =>
+                onSearch({ items: [], totalPages: 0, error, loading: false }),
+            );
+    };
 
-  handleClick = () => {
-    setSearchValue(this.state.inputValue);
-    this.fetchListOfBooks();
-  };
-
-  render() {
     return (
-      <div className="input">
-        <input
-          type="search"
-          placeholder="Search..."
-          value={this.state.inputValue}
-          onChange={this.handleChange}
-          className="input-box"
-        />
-        <button onClick={this.handleClick} className="input-submit">
-          Search
-        </button>
-      </div>
+        <div>
+            <input type="text" value={searchTerm} onChange={handleChange} />
+            <button onClick={handleSearch}>Search</button>
+        </div>
     );
-  }
-}
+};
 
 export default SearchBar;

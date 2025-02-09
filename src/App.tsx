@@ -1,61 +1,70 @@
-import { Component } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import SearchBar from './components/SearchBar/SearchBar.tsx';
-import SearchResult from './components/SearchResult/SearchResult.tsx';
-import { Book } from './types.tsx';
+import { SearchItem } from './types/SearchResult.ts';
 import Loader from './components/Loader/Loader.tsx';
+import SearchResults from './components/SearchResults/SearchResults.tsx';
+import SearchBar from './components/SearchBar/SearchBar.tsx';
+import { State } from './types/App.ts';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import Pagination from './components/Pagination/Pagination.tsx';
 
-interface State {
-  books: Book[];
-  isLoading: boolean;
-  error: Error | null;
-}
+const App: React.FC = () => {
+    const [items, setItems] = useState<SearchItem[]>([]);
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const [error, setError] = useState<Error | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
-class App extends Component {
-  state: State = {
-    books: [],
-    isLoading: false,
-    error: null,
-  };
+    const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const currentPage = Number(params.get('page')) - 1 || 0;
+    const onSearch = (state: State) => {
+        setItems(state.items);
+        setTotalPages(state.totalPages);
+        setError(state.error);
+        setLoading(state.loading);
+    };
 
-  setBooks = (books: Book[]) => {
-    this.setState({ books });
-  };
+    const handleMainPanelClick = () => {
+        const params = new URLSearchParams(location.search);
+        if (location.pathname.startsWith('/details')) {
+            navigate(`/?${params.toString()}`);
+        }
+    };
 
-  setIsLoading = (isLoading: boolean) => {
-    this.setState({ isLoading });
-  };
-
-  throwError = (error: Error) => {
-    this.setState({ error });
-  };
-
-  render() {
-    if (this.state.error) {
-      throw this.state.error;
+    if (error) {
+        throw error;
     }
 
     return (
-      <div className="app">
-        <SearchBar
-          sendBooks={this.setBooks}
-          sendLoadingStatus={this.setIsLoading}
-          throwError={this.throwError}
-        />
-        <button
-          className="error-button"
-          onClick={() => this.throwError(new Error('An error occurred'))}
-        >
-          Error
-        </button>
-        {this.state.isLoading ? (
-          <Loader />
-        ) : (
-          <SearchResult books={this.state.books} />
-        )}
-      </div>
+        <section className="App">
+            <div className="SearchBar">
+                <SearchBar onSearch={onSearch} pageNumber={currentPage} />
+                <button
+                    onClick={() => {
+                        setError(new Error());
+                    }}
+                >
+                    Throw Error
+                </button>
+            </div>
+            <div className="Content" onClick={handleMainPanelClick}>
+                <div className="SearchResult">
+                    {error ? (
+                        <p>Error fetching items</p>
+                    ) : loading ? (
+                        <Loader />
+                    ) : (
+                        <SearchResults items={items} />
+                    )}
+                </div>
+                <Outlet />
+            </div>
+            {!loading && items.length > 0 && (
+                <Pagination totalPages={totalPages} />
+            )}
+        </section>
     );
-  }
-}
+};
 
 export default App;
