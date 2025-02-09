@@ -12,7 +12,6 @@ const SearchBar: React.FC<Props> = ({ onSearch, pageNumber }) => {
         pageNumber = Number(params.get('page')) - 1 || 0;
         pageNumber = pageNumber < 0 ? 0 : pageNumber;
         fetchItems(searchTerm);
-        fetchItems(searchTerm);
     }, [location.search]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

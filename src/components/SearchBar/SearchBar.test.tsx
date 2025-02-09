@@ -53,7 +53,7 @@ describe('SearchBar', () => {
         );
 
         renderComponent(['/?page=2']);
-        await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2)); // Called twice on mount due to the duplicate fetchItems call
+        await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1)); // Called twice on mount due to the duplicate fetchItems call
         expect(mockOnSearch).toHaveBeenCalledWith({
             items: [{ name: 'Animal 1' }, { name: 'Animal 2' }],
             totalPages: 2,
@@ -77,7 +77,7 @@ describe('SearchBar', () => {
         fireEvent.change(input, { target: { value: 'test search' } });
         fireEvent.click(button);
 
-        await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3)); // Called twice on mount and once on search
+        await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2)); // Called twice on mount and once on search
 
         expect(fetchMock).toHaveBeenCalledWith(
             'https://stapi.co/api/v1/rest/animal/search?pageNumber=0',
